@@ -65,6 +65,9 @@ dotnet publish -c Release --runtime linux-x64
 
 The size was 77M
 
+List of platforms for publish
+https://docs.microsoft.com/en-us/dotnet/core/rid-catalog#linux-rids
+
 ### Clean output
 
 ```
