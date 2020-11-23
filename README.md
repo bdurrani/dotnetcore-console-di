@@ -56,3 +56,17 @@ Add the following packages
 - Serilog.Extensions.Hosting (v. 3.1.0)
 - Serilog.Settings.Configuration (v. 3.1.0)
 - Serilog.Sinks.Console
+
+### Build self-contained project
+
+```
+dotnet publish -c Release --runtime linux-x64
+```
+
+The size was 77M
+
+### Clean output
+
+```
+dotnet clean
+```
