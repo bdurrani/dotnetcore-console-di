@@ -2,6 +2,8 @@
 using System.IO;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 
 namespace console_app
@@ -11,6 +13,7 @@ namespace console_app
     static void Main(string[] args)
     {
       Console.WriteLine("Hello World!");
+
       var builder = new ConfigurationBuilder();
       BuildConfig(builder);
       Log.Logger = new LoggerConfiguration()
@@ -23,9 +26,13 @@ namespace console_app
       .ConfigureServices((context, services) =>
       {
         // add services here
+        services.AddTransient<GreetingService>();
       })
       .UseSerilog()
       .Build();
+
+      var svc = ActivatorUtilities.CreateInstance<GreetingService>(host.Services);
+      svc.Run();
     }
 
     static void BuildConfig(IConfigurationBuilder builder)
@@ -37,6 +44,26 @@ namespace console_app
           $"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"}.json",
           optional: true)
       .AddEnvironmentVariables();
+    }
+  }
+
+  public class GreetingService
+  {
+    private readonly ILogger<GreetingService> _log;
+    private readonly IConfiguration _config;
+
+    public GreetingService(ILogger<GreetingService> log, IConfiguration config)
+    {
+      _log = log;
+      _config = config;
+    }
+
+    public void Run()
+    {
+      for (int i = 0; i < _config.GetValue<int>("LoopTimes"); i++)
+      {
+        _log.LogInformation("Run number {runNumber}", i);
+      }
     }
   }
 }
